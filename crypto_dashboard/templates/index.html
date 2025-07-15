@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Market Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" href="https://cryptologos.cc/logos/bitcoin-btc-logo.png" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body class="bg-light">
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mb-0">Market Dashboard</h1>
+        <form method="get" action="/">
+            <select name="mode" onchange="this.form.submit()" class="form-select">
+                <option value="crypto" {% if mode == 'crypto' %}selected{% endif %}>Crypto</option>
+                <option value="stocks" {% if mode == 'stocks' %}selected{% endif %}>Stocks</option>
+            </select>
+        </form>
+    </div>
+
+    <div class="row g-4">
+        {% for coin in coins %}
+        <div class="col-md-4">
+            <a href="/{{ mode }}/{{ coin.symbol }}" style="text-decoration: none; color: inherit;">
+                <div class="card p-3">
+                    <div class="d-flex align-items-center">
+                        <img src="{{ coin.image }}" alt="{{ coin.name }}" width="40" class="me-3">
+                        <div>
+                            <h5 class="mb-0">{{ coin.name }} ({{ coin.symbol.upper() }})</h5>
+                            <p class="mb-0">Price: ${{ coin.current_price }}</p>
+                            <p class="mb-0">Market Cap: ${{ "{:,}".format(coin.market_cap|int) }}</p>
+                            <p class="mb-0">
+                                24h Change:
+                                <span class="{{ 'green' if coin.price_change_percentage_24h >= 0 else 'red' }}">
+                                    {{ "%.2f"|format(coin.price_change_percentage_24h) }}%
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+</body>
+</html>
